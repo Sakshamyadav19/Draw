@@ -1,111 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import DrawingBoard from "./DrawingBoard";
+import Users from "./Users";
+import LiveChat from "./LiveChat";
 
 const Home = ({ socket }) => {
-  const canva = useRef(null);
-  const [drawing, setDrawing] = useState(false);
-  const ctx = useRef(null);
-
-  const startDrawing = ({ nativeEvent }) => {
-    const { offsetX, offsetY } = nativeEvent;
-    ctx.current.beginPath();
-    ctx.current.moveTo(offsetX, offsetY);
-    ctx.current.lineTo(offsetX, offsetY);
-    ctx.current.stroke();
-    setDrawing(true);
-    socket.emit("start-drawing", { x: offsetX, y: offsetY });
-    nativeEvent.preventDefault();
-  };
-
-  const stopDrawing = () => {
-    ctx.current.closePath();
-    setDrawing(false);
-    socket.emit("stop-drawing");
-  };
-
-  const draw = ({ nativeEvent }) => {
-    if (!drawing) return;
-    const { offsetX, offsetY } = nativeEvent;
-    ctx.current.lineTo(offsetX, offsetY);
-    ctx.current.stroke();
-    socket.emit("drawing", { x: offsetX, y: offsetY });
-    nativeEvent.preventDefault();
-  };
-
-  const setToDraw = () => {
-    ctx.current.lineWidth = 5;
-    ctx.current.globalCompositeOperation = "source-over";
-    socket.emit('draw')
-  };
-  const setToErase = () => {
-    ctx.current.lineWidth = 200;
-    ctx.current.globalCompositeOperation = "destination-out";
-    socket.emit('erase')
-  };
-
-  socket.on("erase",()=>{
-    ctx.current.lineWidth = 200;
-    ctx.current.globalCompositeOperation = "destination-out";
-  })
-  socket.on('draw',()=>{
-    ctx.current.lineWidth = 5;
-    ctx.current.globalCompositeOperation = "source-over";
-  })
-
-  socket.on("start-drawing", ({ data }) => {
-    ctx.current.beginPath();
-    ctx.current.moveTo(data.x, data.y);
-    ctx.current.lineTo(data.x, data.y);
-    ctx.current.stroke();
-    setDrawing(true);
-  });
-
-  socket.on("drawing", ({ data }) => {
-    console.log("###### ", data);
-    if (!drawing) return;
-    ctx.current.lineTo(data.x, data.y);
-    ctx.current.stroke();
-  });
-
-  socket.on("stop-drawing", () => {
-    ctx.current.closePath();
-    setDrawing(false);
-  });
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const canvas = canva.current;
-    const context = canvas.getContext("2d");
-
-    context.lineCap = "round";
-    context.strokeStyle = "black";
-    context.lineWidth = 5;
-    ctx.current = context;
+    socket.emit("getRoomInfo");
+    socket.on("getRoomInfo", ({ data }) => {
+      console.log(data);
+      setUsers(data);
+    });
   }, []);
 
   return (
-    <div>
-      <div className=" text-3xl">App</div>
-      <canvas
-        onMouseDown={(e) => {
-          startDrawing(e);
-        }}
-        onMouseUp={() => {
-          stopDrawing();
-        }}
-        onMouseMove={(e) => {
-          draw(e);
-        }}
-        onMouseLeave={() => {
-          stopDrawing();
-        }}
-        ref={canva}
-        width={450}
-        height={450}
-        className="border border-black cursor-crosshair"
-      ></canvas>
-      <button onClick={setToDraw}>Draw</button>
-      <button onClick={setToErase} className="mx-2 border border-black">
-        Erase
-      </button>
+    <div className="flex h-screen justify-evenly items-center">
+      <div className="h-[450px] w-1/4 flex flex-col justify-evenly">
+        {users.map((user) => (
+          <Users name={user.name} score={user.score} />
+        ))}
+      </div>
+      <DrawingBoard socket={socket} />
+      <LiveChat socket={socket} />
     </div>
   );
 };

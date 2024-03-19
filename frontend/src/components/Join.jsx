@@ -1,38 +1,36 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addName } from "../../utils/appSlice";
 
+function generateRandomString() {
+  var result = "";
+  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  var charactersLength = characters.length;
+  for (var i = 0; i < 5; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
-
-const Join = ({socket}) => {
+const Join = ({ socket }) => {
   const input = useRef();
   const userName = useRef();
   const [players, setPlayers] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   const joinRoom = () => {
-    const id = input.current.value;
-    console.log(typeof id)
-    console.log(typeof socket.id)
+    const roomId = input.current.value?input.current.value:generateRandomString();
     socket.emit(
       "join-room",
-      { data: { name: userName.current.value, roomId: id } },
-      (res) => {
-        console.log(res);
-      }
-      );
-      navigate("/home/"+id);
+      { data: { name: userName.current.value, roomId:roomId,players:players }}
+    );
+    dispatch(addName(userName.current.value));
+    navigate("/lobby/"+roomId)
   };
 
-  const createRoom=()=>{
-    socket.emit(
-      "join-room",
-      { data: { name: userName.current.value, roomId: socket.id } },
-      (res) => {
-        console.log(res);
-      }
-      );
-      navigate("/home/"+socket.id);
-  }
 
   const handleOption = (e) => {
     setPlayers(e.target.value);
@@ -97,7 +95,10 @@ const Join = ({socket}) => {
             />
             <label htmlFor="option3">4</label>
           </div>
-          <button onClick={createRoom} className="w-1/3 border border-black rounded-md">
+          <button
+            onClick={()=>{joinRoom()}}
+            className="w-1/3 border border-black rounded-md"
+          >
             Create Room
           </button>
         </div>
