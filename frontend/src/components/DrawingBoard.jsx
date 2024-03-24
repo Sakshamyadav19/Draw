@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const DrawingBoard = ({ socket }) => {
+const DrawingBoard = ({ socket, user, player }) => {
   const canva = useRef(null);
   const [drawing, setDrawing] = useState(false);
   const ctx = useRef(null);
 
   const startDrawing = ({ nativeEvent }) => {
+    if (player != user) return;
     const { offsetX, offsetY } = nativeEvent;
     ctx.current.beginPath();
     ctx.current.moveTo(offsetX, offsetY);
@@ -70,6 +71,12 @@ const DrawingBoard = ({ socket }) => {
     setDrawing(false);
   });
 
+  useEffect(()=>{
+    const canvas = canva.current;
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  },[player])
+
   useEffect(() => {
     const canvas = canva.current;
     const context = canvas.getContext("2d");
@@ -95,8 +102,10 @@ const DrawingBoard = ({ socket }) => {
         onMouseLeave={() => {
           stopDrawing();
         }}
+        width={500}
+        height={450}
         ref={canva}
-        className="border border-black cursor-crosshair w-[500px] h-[450px]"
+        className="border border-black cursor-crosshair"
       ></canvas>
       <button onClick={setToDraw}>Draw</button>
       <button onClick={setToErase} className="mx-2 border border-black">

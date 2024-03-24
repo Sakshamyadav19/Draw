@@ -6,7 +6,6 @@ const Lobby = ({ socket }) => {
   const { id } = useParams();
 
   socket.on("startGame", () => {
-    console.log(id);
     navigate("/Home/" + id);
   });
 

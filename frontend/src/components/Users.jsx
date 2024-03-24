@@ -1,9 +1,12 @@
 import React from "react";
 
-const Users = ({ name, score }) => {
-  console.log("1234");
+const Users = ({ name, score, player }) => {
   return (
-    <div className="flex m-2 border-b-2">
+    <div
+      className={`flex m-2 border-b-2 ${
+        player === name ? "bg-green-500" : "bg-gray-300"
+      }`}
+    >
       <div className="border border-black rounded-full w-12 h-12 flex justify-center items-center">
         {name[0].toUpperCase()}
       </div>
