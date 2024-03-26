@@ -3,7 +3,6 @@ import { RoomManager } from "./roomManagement.js";
 export const handleSocketEvents = (io, socket, rooms) => {
   socket.on("join-room", (arg, cb) => {
     const { roomId, name, players } = arg.data;
-    console.log(roomId, " x ", name, "-", players);
     socket.data.name = name;
 
     RoomManager.joinRoom(socket, roomId);
@@ -45,15 +44,35 @@ export const handleSocketEvents = (io, socket, rooms) => {
     socket.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
   });
 
-  socket.on("sendMsg", (arg) => {
-    const roomId = RoomManager.getSocketRoomId();
-    io.to(roomId).emit("receiveMsg", { message: arg.data });
-  });
-
   socket.on("drawWord", (arg) => {
     const roomId = RoomManager.getSocketRoomId();
+    RoomManager.setWord(arg.data)
+    RoomManager.totalRounds--;
     io.to(roomId).emit("chosenWord", { message: arg.data });
+    if(RoomManager.totalRounds==-1)
+    io.to(roomId).emit("endGame")
   });
+
+  socket.on("sendChat", (arg) => {
+    const chats = RoomManager.addChat(arg.data);
+    const roomId = RoomManager.getSocketRoomId();
+    RoomManager.updateUserScore(rooms, roomId, arg.data.name,arg.data.chat);
+    io.to(roomId).emit("getChat", { message: chats });
+    if(RoomManager.word==arg.data.chat)
+    io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
+  });
+
+  socket.on("clearChat", () => {
+    const chats = RoomManager.clearChat();
+    const roomId = RoomManager.getSocketRoomId();
+    io.to(roomId).emit("getChat", { message: chats });
+  });
+
+  // socket.on("updateScore", (arg) => {
+  //   const roomId = RoomManager.getSocketRoomId();
+  //   RoomManager.updateUserScore(rooms, roomId, arg.user);
+  //   io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
+  // });
 
   // socket.on("Play",()=>{
   //   const roomId = RoomManager.getSocketRoomId();

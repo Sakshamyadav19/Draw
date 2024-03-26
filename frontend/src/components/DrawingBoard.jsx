@@ -6,7 +6,7 @@ const DrawingBoard = ({ socket, user, player }) => {
   const ctx = useRef(null);
 
   const startDrawing = ({ nativeEvent }) => {
-    if (player != user) return;
+    if (player == user) return;
     const { offsetX, offsetY } = nativeEvent;
     ctx.current.beginPath();
     ctx.current.moveTo(offsetX, offsetY);
@@ -71,11 +71,11 @@ const DrawingBoard = ({ socket, user, player }) => {
     setDrawing(false);
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     const canvas = canva.current;
     const context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
-  },[player])
+  }, [player]);
 
   useEffect(() => {
     const canvas = canva.current;

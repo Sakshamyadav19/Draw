@@ -4,11 +4,17 @@ import Users from "./Users";
 import LiveChat from "./LiveChat";
 import { useSelector } from "react-redux";
 import Word from "./Word";
+import { useNavigate } from "react-router-dom";
 
 const Home = ({ socket }) => {
   const [users, setUsers] = useState([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const userName = useSelector((store) => store.app.name);
+  const navigate = useNavigate()
+
+  socket.on("endGame",()=>{
+    navigate("/result");
+  })
 
   useEffect(() => {
     const fetchRoomInfo = () => {
@@ -58,7 +64,11 @@ const Home = ({ socket }) => {
             user={userName}
             player={currentPlayer.name}
           />
-          <LiveChat socket={socket} name={userName} player={currentPlayer.name}/>
+          <LiveChat
+            socket={socket}
+            name={userName}
+            player={currentPlayer.name}
+          />
         </div>
       </div>
     )

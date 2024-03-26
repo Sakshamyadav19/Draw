@@ -34,7 +34,6 @@ const Join = ({ socket }) => {
 
   const handleOption = (e) => {
     setPlayers(e.target.value);
-    console.log(players);
   };
 
   return (

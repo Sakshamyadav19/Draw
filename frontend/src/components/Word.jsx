@@ -6,16 +6,13 @@ const Word = ({ socket }) => {
 
   const getRandomWord = (arr) => {
     const index = Math.floor(Math.random() * arr.length);
+    socket.emit("drawWord", { data: arr[index] });
     setWordToDraw(arr[index]);
   };
   useEffect(() => {
     getRandomWord(pictionaryWords);
-  }, [socket]);
-
-  useEffect(()=>{
-    socket.emit("drawWord", { data: wordToDraw });
-  },[wordToDraw])
-
+  }, []);
+  
 
   return (
     <div className="border border-black px-4 font-bold py-2">{wordToDraw}</div>
