@@ -1,7 +1,25 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addName } from "../../utils/appSlice";
+import { addName, updateTotalPlayers } from "../../utils/appSlice";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function generateRandomString() {
   var result = "";
@@ -17,91 +35,95 @@ const Join = ({ socket }) => {
   const input = useRef();
   const userName = useRef();
   const [players, setPlayers] = useState();
+  const [errMsg, setErrMsg] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  let roomId;
 
+  const createRoom = () => {
+    roomId = generateRandomString();
 
-  const joinRoom = () => {
-    const roomId = input.current.value?input.current.value:generateRandomString();
-    socket.emit(
-      "join-room",
-      { data: { name: userName.current.value, roomId:roomId,players:players }}
-    );
+    socket.emit("join-room", {
+      data: { name: userName.current.value, roomId: roomId, players: players },
+    });
+
     dispatch(addName(userName.current.value));
-    navigate("/lobby/"+roomId)
+    navigate("/lobby/" + roomId);
   };
 
+  const joinRoom = () => {
+    if (!input.current.value) {
+      setErrMsg("Invalid Inputs !");
+      return;
+    }
+    const roomId = input.current.value;
 
-  const handleOption = (e) => {
-    setPlayers(e.target.value);
+    socket.emit("join-room", {
+      data: { name: userName.current.value, roomId: roomId, players: players },
+    });
+    dispatch(addName(userName.current.value));
+    navigate("/lobby/" + roomId);
+  };
+
+  const handleSelectChange = (count) => {
+    setPlayers(count);
+    dispatch(updateTotalPlayers(count))
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-600 text-white">
-      <div className="p-5 border border-black w-1/3 h-1/4 ">
-        <div className="flex justify-center items-center">
-          <input
-            type="text"
-            placeholder="Enter Name"
-            ref={userName}
-            className=" bg-transparent border border-black px-2 my-2 rounded-md w-3/4"
-          />
-        </div>
-        <div className="flex justify-between mb-4">
-          <input
-            ref={input}
-            className="border border-black w-3/2 bg-transparent px-2 rounded-md"
-            placeholder="Enter RoomId"
-          ></input>
-          <button
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Draw.io</CardTitle>
+          <CardDescription>Doodle your way to victory!</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">Name</Label>
+                <Input ref={userName} id="name" placeholder="Name" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="roomId">RoomId</Label>
+                <Input ref={input} id="roomId" placeholder="RoomId" />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="framework">Players</Label>
+                <Select onValueChange={handleSelectChange}>
+                  <SelectTrigger id="framework">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </form>
+          <div className=" text-red-700">{errMsg}</div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button
             onClick={() => {
               joinRoom();
             }}
-            className="border border-black w-1/3 rounded-md"
+            variant="outline"
           >
             Join
-          </button>
-        </div>
-        <div className="flex justify-between">
-          <div>
-            <span className="pr-2">Players:</span>
-            <input
-              type="radio"
-              id="option1"
-              name="options"
-              value="2"
-              onChange={handleOption}
-            />
-            <label htmlFor="option1" className="pr-2">
-              2
-            </label>
-            <input
-              type="radio"
-              id="option2"
-              name="options"
-              value="3"
-              onChange={handleOption}
-            />
-            <label htmlFor="option2" className="pr-2">
-              3
-            </label>
-            <input
-              type="radio"
-              id="option3"
-              name="options"
-              value="4"
-              onChange={handleOption}
-            />
-            <label htmlFor="option3">4</label>
-          </div>
-          <button
-            onClick={()=>{joinRoom()}}
-            className="w-1/3 border border-black rounded-md"
+          </Button>
+          <Button
+            onClick={() => {
+              createRoom();
+            }}
           >
-            Create Room
-          </button>
-        </div>
-      </div>
+            Create
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 const DrawingBoard = ({ socket, user, player }) => {
   const canva = useRef(null);
@@ -89,6 +90,7 @@ const DrawingBoard = ({ socket, user, player }) => {
 
   return (
     <div>
+      <div>
       <canvas
         onMouseDown={(e) => {
           startDrawing(e);
@@ -107,10 +109,13 @@ const DrawingBoard = ({ socket, user, player }) => {
         ref={canva}
         className="border border-black cursor-crosshair"
       ></canvas>
-      <button onClick={setToDraw}>Draw</button>
-      <button onClick={setToErase} className="mx-2 border border-black">
-        Erase
-      </button>
+    </div>
+     <div className="flex justify-center py-2">
+        <Button onClick={setToDraw}>Draw</Button>
+        <Button onClick={setToErase} className="mx-2 border border-black">
+          Erase
+        </Button>
+      </div>
     </div>
   );
 };

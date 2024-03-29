@@ -12,10 +12,11 @@ const Word = ({ socket }) => {
   useEffect(() => {
     getRandomWord(pictionaryWords);
   }, []);
-  
 
   return (
-    <div className="border border-black px-4 font-bold py-2">{wordToDraw}</div>
+    <div className="border border-black px-4 font-bold py-2 rounded-md bg-black text-white">
+      {wordToDraw}
+    </div>
   );
 };
 

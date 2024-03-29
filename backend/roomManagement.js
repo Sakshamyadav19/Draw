@@ -1,12 +1,13 @@
 export const RoomManager = {
   roomId: null,
-  totalRounds:4,
+  totalRounds: null,
   chats: null,
   points: null,
-  word:null,
+  word: null,
 
   joinRoom(socket, roomId) {
     socket.join(roomId);
+    this.totalRounds=100
     this.roomId = roomId;
     this.chats = [];
     this.points = 300;
@@ -23,16 +24,15 @@ export const RoomManager = {
       });
   },
 
-  updateUserScore(rooms, roomId, user,guessed) {
-    if(this.word!=guessed)
-    return;
+  updateUserScore(rooms, roomId, user, guessed) {
+    if (this.word != guessed) return;
     const index = rooms[roomId].findIndex((obj) => obj.name === user);
     rooms[roomId][index].score += this.points;
     this.points = this.points / 2;
   },
 
   addChat(chat) {
-    this.chats.push(chat);
+    this.chats.unshift(chat);
     return this.chats;
   },
 
@@ -41,9 +41,9 @@ export const RoomManager = {
     return this.chats;
   },
 
-  setWord(word){
-    this.word=word
-    this.points=300
+  setWord(word) {
+    this.word = word;
+    this.points = 300;
   },
 
   getSocketRoomId() {

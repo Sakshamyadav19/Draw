@@ -2,19 +2,21 @@ import React, { useEffect, useState } from "react";
 import DrawingBoard from "./DrawingBoard";
 import Users from "./Users";
 import LiveChat from "./LiveChat";
-import { useSelector } from "react-redux";
 import Word from "./Word";
+import Result from "./Result";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Home = ({ socket }) => {
   const [users, setUsers] = useState([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+  const [endGame, setEndGame] = useState(false);
   const userName = useSelector((store) => store.app.name);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  socket.on("endGame",()=>{
-    navigate("/result");
-  })
+  const handleEndGame = () => {
+    setEndGame(true);
+  };
 
   useEffect(() => {
     const fetchRoomInfo = () => {
@@ -41,18 +43,37 @@ const Home = ({ socket }) => {
     };
   }, [users]);
 
+  useEffect(() => {
+    socket.on("endGame", handleEndGame);
+
+    return () => {
+      socket.off("endGame", handleEndGame);
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (endGame) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const currentPlayer = users[currentPlayerIndex];
 
-  return (
-    currentPlayer && (
-      <div>
-        <div className="flex items-center justify-center">
-          {userName == currentPlayer.name ? <Word socket={socket} /> : <></>}
+  const renderGameContent = () => {
+    if (!currentPlayer) {
+      return <p>Loading...</p>;
+    }
+
+    return (
+      <div className=" bg-stone-300 ">
+        <div className="flex items-center justify-center h-16">
+          {userName === currentPlayer.name && <Word socket={socket} />}
         </div>
-        <div className="flex h-screen justify-evenly items-center">
+        <div className="flex justify-evenly">
           <div className="h-[450px] w-1/4 flex flex-col justify-evenly">
             {users.map((user) => (
               <Users
+                key={user.name}
                 name={user.name}
                 score={user.score}
                 player={currentPlayer.name}
@@ -71,8 +92,10 @@ const Home = ({ socket }) => {
           />
         </div>
       </div>
-    )
-  );
+    );
+  };
+
+  return endGame ? <Result users={users} /> : renderGameContent();
 };
 
 export default Home;

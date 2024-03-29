@@ -15,7 +15,6 @@ const App = () => {
           <Route path="/" element={<Join socket={socket} />} />
           <Route path="/home/:id" element={<Home socket={socket} />} />
           <Route path="/lobby/:id" element={<Lobby socket={socket}/>} />
-          <Route path="/result" element={<Result />} />
         </Routes>
       </div>
     </BrowserRouter>

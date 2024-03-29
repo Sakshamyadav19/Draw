@@ -9,7 +9,8 @@ export const handleSocketEvents = (io, socket, rooms) => {
     RoomManager.updateRoomInfo(io, rooms, roomId);
 
     const usersInRoom = io.sockets.adapter.rooms.get(roomId).size;
-    if (usersInRoom == 2) {
+    io.to(roomId).emit("usersJoined",{data:usersInRoom})
+    if (usersInRoom == players) {
       io.to(roomId).emit("startGame");
     }
     socket.on("start-drawing", (arg) => {
@@ -46,20 +47,19 @@ export const handleSocketEvents = (io, socket, rooms) => {
 
   socket.on("drawWord", (arg) => {
     const roomId = RoomManager.getSocketRoomId();
-    RoomManager.setWord(arg.data)
+    RoomManager.setWord(arg.data);
     RoomManager.totalRounds--;
     io.to(roomId).emit("chosenWord", { message: arg.data });
-    if(RoomManager.totalRounds==-1)
-    io.to(roomId).emit("endGame")
+    if (RoomManager.totalRounds == -1) io.to(roomId).emit("endGame");
   });
 
   socket.on("sendChat", (arg) => {
     const chats = RoomManager.addChat(arg.data);
     const roomId = RoomManager.getSocketRoomId();
-    RoomManager.updateUserScore(rooms, roomId, arg.data.name,arg.data.chat);
+    RoomManager.updateUserScore(rooms, roomId, arg.data.name, arg.data.chat);
     io.to(roomId).emit("getChat", { message: chats });
-    if(RoomManager.word==arg.data.chat)
-    io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
+    if (RoomManager.word == arg.data.chat)
+      io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
   });
 
   socket.on("clearChat", () => {
