@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 const Countdown = ({ changeIndex }) => {
-  const [count, setCount] = useState(20);
+  const [count, setCount] = useState(60);
 
   useEffect(() => {
     const countdownInterval = setInterval(() => {
@@ -9,7 +9,7 @@ const Countdown = ({ changeIndex }) => {
         if (prevCount === 0) {
           changeIndex();
           // Restart countdown when it reaches 0
-          return 20;
+          return 60;
         } else {
           return prevCount - 1;
         }
