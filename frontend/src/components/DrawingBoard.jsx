@@ -7,7 +7,7 @@ const DrawingBoard = ({ socket, user, player }) => {
   const ctx = useRef(null);
 
   const startDrawing = ({ nativeEvent }) => {
-    if (player == user) return;
+    if (player != user) return;
     const { offsetX, offsetY } = nativeEvent;
     ctx.current.beginPath();
     ctx.current.moveTo(offsetX, offsetY);

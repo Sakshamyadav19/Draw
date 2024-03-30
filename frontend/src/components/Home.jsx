@@ -12,6 +12,7 @@ const Home = ({ socket }) => {
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [endGame, setEndGame] = useState(false);
   const userName = useSelector((store) => store.app.name);
+  const totalPlayers = useSelector((store) => store.app.totalPlayers);
   const navigate = useNavigate();
 
   const handleEndGame = () => {
@@ -33,15 +34,15 @@ const Home = ({ socket }) => {
     };
   }, [socket]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % users.length);
-    }, 10000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % users.length);
+  //   }, 10000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [users]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [users]);
 
   useEffect(() => {
     socket.on("endGame", handleEndGame);
@@ -56,6 +57,12 @@ const Home = ({ socket }) => {
       navigate("/");
     }
   }, [navigate]);
+
+  useEffect(() => socket.emit("Play"), []);
+
+  socket.on("currentPlayer", ({ player }) => {
+    setCurrentPlayerIndex(player % totalPlayers);
+  });
 
   const currentPlayer = users[currentPlayerIndex];
 

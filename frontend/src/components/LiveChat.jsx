@@ -31,13 +31,15 @@ const LiveChat = ({ socket, name, player }) => {
             msg={chat.chat}
             name={chat.name}
             correctWord={correctWord}
-            toggleState={()=>{setAnswered(true)}}
+            toggleState={()=>{}}
           />
         ))}
       </div>
       <div className="w-full">
         <form
           onSubmit={(e) => {
+            if(message.current.value==correctWord)
+            setAnswered(true)
             e.preventDefault();
             socket.emit("sendChat", {
               data: { name: name, chat: message.current.value },

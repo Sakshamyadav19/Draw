@@ -4,15 +4,14 @@ export const handleSocketEvents = (io, socket, rooms) => {
   socket.on("join-room", (arg, cb) => {
     const { roomId, name, players } = arg.data;
     socket.data.name = name;
+    socket.data.total = players;
 
     RoomManager.joinRoom(socket, roomId);
     RoomManager.updateRoomInfo(io, rooms, roomId);
 
     const usersInRoom = io.sockets.adapter.rooms.get(roomId).size;
-    io.to(roomId).emit("usersJoined",{data:usersInRoom})
-    if (usersInRoom == players) {
-      io.to(roomId).emit("startGame");
-    }
+    io.to(roomId).emit("usersJoined", { data: usersInRoom });
+
     socket.on("start-drawing", (arg) => {
       socket.to(roomId).emit("start-drawing", { data: arg });
     });
@@ -74,8 +73,12 @@ export const handleSocketEvents = (io, socket, rooms) => {
   //   io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
   // });
 
-  // socket.on("Play",()=>{
-  //   const roomId = RoomManager.getSocketRoomId();
-  //   io.to(roomId).emit("currentPlayer",{player:RoomManager.getCurrentPlayer(rooms,roomId)})
-  // })
+  socket.on("Play", () => {
+    const roomId = RoomManager.getSocketRoomId();
+    let i = 0;
+    setInterval(() => {
+      socket.to(roomId).emit("currentPlayer", { player: i });
+      i++;
+    }, 10000);
+  });
 };

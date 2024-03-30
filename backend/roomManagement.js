@@ -7,7 +7,7 @@ export const RoomManager = {
 
   joinRoom(socket, roomId) {
     socket.join(roomId);
-    this.totalRounds=100
+    this.totalRounds=10
     this.roomId = roomId;
     this.chats = [];
     this.points = 300;
@@ -18,7 +18,7 @@ export const RoomManager = {
       .fetchSockets()
       .then((sockets) => {
         sockets.forEach((socket) => {
-          rooms[roomId].push({ name: socket.data.name, score: 0 });
+          rooms[roomId].push({ name: socket.data.name, score: 0,total:socket.data.total });
         });
         io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
       });

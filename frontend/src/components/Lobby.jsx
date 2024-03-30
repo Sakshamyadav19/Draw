@@ -8,16 +8,16 @@ const Lobby = ({ socket }) => {
   const { id } = useParams();
   const [usersCount, setUsersCount] = useState();
   const players = useSelector((store) => store.app.totalPlayers);
-  console.log(players);
+  const name=useSelector((store) => store.app.name);
+
 
   socket.on("usersJoined", ({ data }) => {
-    console.log(data);
     setUsersCount(data);
   });
 
-  socket.on("startGame", () => {
+  if(players==usersCount){
     navigate("/Home/" + id);
-  });
+  }
 
   return (
     <div className=" text-3xl">

@@ -56,6 +56,13 @@ const Join = ({ socket }) => {
       setErrMsg("Invalid Inputs !");
       return;
     }
+
+    socket.emit("getRoomInfo");
+    socket.on("getRoomInfo", ({ data }) => {
+
+      setPlayers(data[0].total);
+      dispatch(updateTotalPlayers(data[0].total));
+    });
     const roomId = input.current.value;
 
     socket.emit("join-room", {
@@ -67,7 +74,7 @@ const Join = ({ socket }) => {
 
   const handleSelectChange = (count) => {
     setPlayers(count);
-    dispatch(updateTotalPlayers(count))
+    dispatch(updateTotalPlayers(count));
   };
 
   return (
