@@ -42,6 +42,11 @@ const Join = ({ socket }) => {
 
   const createRoom = () => {
     roomId = generateRandomString();
+    if(!players)
+    {
+      setErrMsg("Invalid Inputs !");
+      return;
+    }
 
     socket.emit("join-room", {
       data: { name: userName.current.value, roomId: roomId, players: players },
@@ -102,7 +107,6 @@ const Join = ({ socket }) => {
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent position="popper">
-                    <SelectItem value="1">1</SelectItem>
                     <SelectItem value="2">2</SelectItem>
                     <SelectItem value="3">3</SelectItem>
                     <SelectItem value="4">4</SelectItem>

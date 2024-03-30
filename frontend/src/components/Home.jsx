@@ -6,6 +6,7 @@ import Word from "./Word";
 import Result from "./Result";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Countdown from "./Countdown";
 
 const Home = ({ socket }) => {
   const [users, setUsers] = useState([]);
@@ -34,16 +35,6 @@ const Home = ({ socket }) => {
     };
   }, [socket]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % users.length);
-  //   }, 10000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [users]);
-
   useEffect(() => {
     socket.on("endGame", handleEndGame);
 
@@ -58,11 +49,9 @@ const Home = ({ socket }) => {
     }
   }, [navigate]);
 
-  useEffect(() => socket.emit("Play"), []);
-
-  socket.on("currentPlayer", ({ player }) => {
-    setCurrentPlayerIndex(player % totalPlayers);
-  });
+  useEffect(() => {
+    socket.emit("Play");
+  }, []);
 
   const currentPlayer = users[currentPlayerIndex];
 
@@ -73,6 +62,11 @@ const Home = ({ socket }) => {
 
     return (
       <div className=" bg-stone-300 ">
+        <Countdown
+          changeIndex={() => {
+            setCurrentPlayerIndex(prevIndex => (prevIndex + 1) % totalPlayers);
+          }}
+        />
         <div className="flex items-center justify-center h-16">
           {userName === currentPlayer.name && <Word socket={socket} />}
         </div>

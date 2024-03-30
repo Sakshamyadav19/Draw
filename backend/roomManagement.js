@@ -7,7 +7,7 @@ export const RoomManager = {
 
   joinRoom(socket, roomId) {
     socket.join(roomId);
-    this.totalRounds=10
+    this.totalRounds=4
     this.roomId = roomId;
     this.chats = [];
     this.points = 300;

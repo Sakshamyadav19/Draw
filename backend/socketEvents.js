@@ -67,18 +67,13 @@ export const handleSocketEvents = (io, socket, rooms) => {
     io.to(roomId).emit("getChat", { message: chats });
   });
 
-  // socket.on("updateScore", (arg) => {
-  //   const roomId = RoomManager.getSocketRoomId();
-  //   RoomManager.updateUserScore(rooms, roomId, arg.user);
-  //   io.to(roomId).emit("getRoomInfo", { data: rooms[roomId] });
-  // });
-
   socket.on("Play", () => {
     const roomId = RoomManager.getSocketRoomId();
     let i = 0;
-    setInterval(() => {
+    const interval = setInterval(() => {
       socket.to(roomId).emit("currentPlayer", { player: i });
       i++;
     }, 10000);
+    socket.on('disconnect', () => clearInterval(interval));
   });
 };
