@@ -17,7 +17,7 @@ export const handleSocketEvents = (io, socket, rooms) => {
     });
 
     socket.on("drawing", (arg) => {
-      io.to(roomId).emit("drawing", { data: arg });
+      socket.to(roomId).emit("drawing", { data: arg });
     });
 
     socket.on("stop-drawing", () => {

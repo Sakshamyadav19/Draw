@@ -42,7 +42,7 @@ const Join = ({ socket }) => {
 
   const createRoom = () => {
     roomId = generateRandomString();
-    if(!players)
+    if(!players || !userName.current.value)
     {
       setErrMsg("Invalid Inputs !");
       return;
@@ -57,7 +57,7 @@ const Join = ({ socket }) => {
   };
 
   const joinRoom = () => {
-    if (!input.current.value) {
+    if (!input.current.value||!userName.current.value) {
       setErrMsg("Invalid Inputs !");
       return;
     }

@@ -84,33 +84,33 @@ const DrawingBoard = ({ socket, user, player }) => {
 
     context.lineCap = "round";
     context.strokeStyle = "black";
-    context.lineWidth = 5;
+    context.lineWidth = 3;
     ctx.current = context;
   }, []);
 
   return (
     <div>
       <div>
-      <canvas
-        onMouseDown={(e) => {
-          startDrawing(e);
-        }}
-        onMouseUp={() => {
-          stopDrawing();
-        }}
-        onMouseMove={(e) => {
-          draw(e);
-        }}
-        onMouseLeave={() => {
-          stopDrawing();
-        }}
-        width={500}
-        height={450}
-        ref={canva}
-        className="border border-black cursor-crosshair"
-      ></canvas>
-    </div>
-     <div className="flex justify-center py-2">
+        <canvas
+          onMouseDown={(e) => {
+            startDrawing(e);
+          }}
+          onMouseUp={() => {
+            stopDrawing();
+          }}
+          onMouseMove={(e) => {
+            draw(e);
+          }}
+          onMouseLeave={() => {
+            stopDrawing();
+          }}
+          width={500}
+          height={450}
+          ref={canva}
+          className="border border-black cursor-crosshair"
+        ></canvas>
+      </div>
+      <div className="flex justify-center py-2">
         <Button onClick={setToDraw}>Draw</Button>
         <Button onClick={setToErase} className="mx-2 border border-black">
           Erase
