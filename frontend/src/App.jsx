@@ -6,7 +6,6 @@ import Join from "./components/Join";
 import Lobby from "./components/Lobby";
 const socket = io(import.meta.env.VITE_REACT_APP_SOCKET_URL);
 import { Analytics } from "@vercel/analytics/react";
-console.log(import.meta.env);
 
 const App = () => {
   return (
