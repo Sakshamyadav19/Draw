@@ -4,7 +4,8 @@ import Home from "./components/Home";
 import io from "socket.io-client";
 import Join from "./components/Join";
 import Lobby from "./components/Lobby";
-const socket = io("https://determined-highfalutin-ornament.glitch.me/");
+const socket = io(process.env.SOCKET_URL);
+import { Analytics } from "@vercel/analytics/react"
 
 const App = () => {
   return (
