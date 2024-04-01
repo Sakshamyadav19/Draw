@@ -61,7 +61,7 @@ const Home = ({ socket }) => {
     }
 
     return (
-      <div className=" bg-stone-300 ">
+      <div className="bg-stone-300 h-screen">
         <Countdown
           changeIndex={() => {
             setCurrentPlayerIndex(prevIndex => (prevIndex + 1) % totalPlayers);
